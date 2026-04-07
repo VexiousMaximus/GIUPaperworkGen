@@ -3,90 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SanGang Entry Generator V1b</title>
+    <title>San Andreas Gang Database Entry</title>
     <style>
         body { font-family: Arial, sans-serif; background: #0b0f1a; color: white; margin: 0; padding: 20px; }
-        .container { max-width: 900px; margin: auto; }
-        h1 { text-align: center; }
-        input, textarea, select { width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 6px; border: none; }
-        button { width: 100%; padding: 12px; background: #38bdf8; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 5px; }
+        .container { max-width: 900px; margin: auto; background: #1a1f2e; border: 2px solid #333; }
+        .header { 
+            background: #000; 
+            color: white; 
+            padding: 15px 20px; 
+            display: flex; 
+            align-items: center; 
+            gap: 15px;
+        }
+        .header img { max-height: 80px; }
+        .header-text h1 { margin: 0; font-size: 22px; line-height: 1.1; }
+        .header-text p { margin: 4px 0 0; font-size: 15px; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 10px; border: 1px solid #444; text-align: left; vertical-align: top; }
+        th { background: #222; color: white; font-weight: bold; width: 30%; }
+        .section { background: #222; color: white; padding: 10px 15px; font-weight: bold; font-size: 15px; }
+        .content { background: #f8f8f8; color: black; padding: 15px; min-height: 100px; }
+        .criteria-box { background: white; color: black; padding: 15px; border: 1px dashed #666; min-height: 180px; }
+        .footer { text-align: center; font-size: 12px; padding: 12px; background: #111; color: #aaa; }
+        input, textarea, select { width: 100%; padding: 8px; margin: 5px 0; box-sizing: border-box; }
+        button { width: 100%; padding: 12px; background: #38bdf8; border: none; border-radius: 4px; font-weight: bold; margin-top: 10px; cursor: pointer; }
         button:hover { background: #0ea5e9; }
-        .output { margin-top: 30px; background: #e5e5e5; padding: 20px; color: black; }
+        .output { margin-top: 30px; background: #111; padding: 20px; border: 2px solid #444; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>SanGang Entry Generator</h1>
-        <input id="investigator" placeholder="Investigator Name">
+        <div class="header">
+            <img src="https://mdc.gta.world/img/logo/en_ls/DAO.png" alt="DAO Logo">
+            <div class="header-text">
+                <h1>LOS SANTOS COUNTY DISTRICT ATTORNEY'S OFFICE</h1>
+                <p>San Andreas Gang Database Entry</p>
+            </div>
+        </div>
+
+        <input id="investigator" placeholder="Filing Investigator">
         <input id="badge" placeholder="Badge Number">
-        <input id="datetime" placeholder="Date/Time">
-        <input id="location" placeholder="Location">
+        <input id="datetime" placeholder="Date and Time">
+        <input id="location" placeholder="Street / Cross Street">
+
         <input id="subject" placeholder="Subject Name">
         <input id="alias" placeholder="Alias">
-        <input id="gang" placeholder="Gang Affiliation">
-        <select id="threat">
-            <option>LOW</option>
-            <option>MEDIUM</option>
-            <option>HIGH</option>
-        </select>
-        <textarea id="description" placeholder="Description"></textarea>
-        <textarea id="criteria" placeholder="Criteria (one per line, A-H)"></textarea>
-        <textarea id="evidence" placeholder="Evidence (format: Name|Link per line)"></textarea>
+        <input id="gang" placeholder="Gang">
+        <textarea id="description" placeholder="Physical Description" rows="3"></textarea>
+
+        <textarea id="criteria" placeholder="Criteria (one per line, e.g. A: reason here)" rows="8"></textarea>
+
+        <textarea id="evidence" placeholder="Evidence (one per line, Name|Link)" rows="4"></textarea>
+
         <button onclick="generate()">Generate Document</button>
-        <button onclick="copyHTML()">Copy Document MDC FORMAT</button>
+        <button onclick="copyHTML()">Copy Document HTML</button>
+
         <div id="output" class="output"></div>
     </div>
 
     <script>
         function generate() {
-            const investigator = document.getElementById('investigator').value || "yes";
-            const badge = document.getElementById('badge').value || "1234";
-            const datetime = document.getElementById('datetime').value || "24/24/1925";
-            const location = document.getElementById('location').value || "yes";
-            const subject = document.getElementById('subject').value || "yes";
-            const alias = document.getElementById('alias').value || "yes";
-            const gang = document.getElementById('gang').value || "yes";
-            const threat = document.getElementById('threat').value;
-            const description = document.getElementById('description').value || "yes";
+            const investigator = document.getElementById('investigator').value || "—";
+            const badge = document.getElementById('badge').value || "—";
+            const datetime = document.getElementById('datetime').value || "—";
+            const location = document.getElementById('location').value || "—";
+            const subject = document.getElementById('subject').value || "—";
+            const alias = document.getElementById('alias').value || "—";
+            const gang = document.getElementById('gang').value || "—";
+            const description = document.getElementById('description').value.replace(/\n/g, '<br>') || "—";
 
             const criteriaLines = document.getElementById('criteria').value.trim().split("\n").filter(l => l.trim() !== "");
+            let criteriaHTML = criteriaLines.map(line => `• ${line.trim()}<br>`).join("") || "—";
+
             const evidenceLines = document.getElementById('evidence').value.trim().split("\n").filter(l => l.trim() !== "");
-
-            let criteriaHTML = "";
-            const letters = ['A','B','C','D','E','F','G','H'];
-            criteriaLines.forEach((line, i) => {
-                if (i < letters.length) {
-                    criteriaHTML += `<b>CRITERIA ${letters[i]}:</b> ${line.trim()}<br>`;
-                }
-            });
-
-            let evidenceHTML = "";
-            evidenceLines.forEach((line, i) => {
-                let name = line.trim();
-                let link = "www.google.com";
+            let evidenceHTML = evidenceLines.map((line, i) => {
                 if (line.includes("|")) {
-                    const parts = line.split("|");
-                    name = parts[0].trim();
-                    link = parts[1].trim();
+                    const [name, link] = line.split("|").map(s => s.trim());
+                    return `Exhibit ${i+1}: ${name} - <a href="${link}" target="_blank">ATTACHMENT</a><br>`;
                 }
-                evidenceHTML += `<b>Exhibit ${i+1}: ${name} - <a href="${link}" target="_blank">ATTACHMENT</a></b><br>`;
-            });
+                return `Exhibit ${i+1}: ${line.trim()} - <a href="#" target="_blank">ATTACHMENT</a><br>`;
+            }).join("") || "Attach exhibits below...";
 
-            const fullHTML = `<p><br></p><div style="text-align:center; margin-bottom:10px;"> <img src="https://mdc.gta.world/img/logo/en_ls/DAO.png" style="max-width:120px;"> </div><p> <br></p><div style="text-align:center; font-weight:bold; margin-bottom:10px;"> <span style="color:red;">CONFIDENTIAL</span> - INTERNAL USE ONLY<br> Unauthorized access, duplication or distribution is strictly prohibited. </div><p> <br></p><div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px;">FILING DETAILS</div><p> <br></p><div style="background:white; padding:10px; border:1px solid #ccc;"> <font color="#000000" style=""><b>FILING INVESTIGATOR: ${investigator}<br> BADGE NUMBER: ${badge}<br> FILING AGENCY: BUREAU OF INVESTIGATION<br> DATE/TIME: ${datetime}<br> LOCATION: ${location} </b></font></div><p> <br></p><div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px; margin-top:10px;">SUBJECT DETAILS</div><p> <br></p><div style="background:white; padding:10px; border:1px solid #ccc;"> <b><font color="#000000">SUBJECT NAME: ${subject}<br> SUBJECT'S ALIAS: ${alias}<br> GANG AFFILIATION: ${gang}<br> THREAT LEVEL: ${threat}<br> DESCRIPTION: ${description} </font></b></div><p> <br></p><div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px; margin-top:10px;">CRITERIA</div><p> <font color="#000000"><br></font></p><div style="background:white; padding:10px; border:1px solid #ccc;"> <font color="#000000">${criteriaHTML}</font><br> </div><p> <br></p><div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px; margin-top:10px;">EVIDENCE</div><p> <br></p><div style="background:white; padding:10px; border:1px solid #ccc;"> <font color="#000000">${evidenceHTML}</font><br> </div>`;
+            const html = `
+<div style="background:#0a0a0a; color:white; font-family:Arial,sans-serif; max-width:900px; margin:auto; border:2px solid #333; overflow:hidden;">
+    <div style="background:#000; padding:20px; display:flex; align-items:center; gap:20px;">
+        <img src="https://mdc.gta.world/img/logo/en_ls/DAO.png" style="max-height:85px;" alt="DAO Logo">
+        <div>
+            <h1 style="margin:0; font-size:24px; line-height:1.1;">LOS SANTOS COUNTY DISTRICT ATTORNEY'S OFFICE</h1>
+            <p style="margin:8px 0 0; font-size:16px;">San Andreas Gang Database Entry</p>
+        </div>
+    </div>
 
-            document.getElementById('output').innerHTML = fullHTML;
+    <div style="background:#222; color:white; padding:10px 15px; font-weight:bold; font-size:15px;">FILING DETAILS</div>
+    <table style="width:100%; border-collapse:collapse;">
+        <tr><th style="background:#222; color:white; padding:10px; border:1px solid #444; width:30%;">FILING INVESTIGATOR</th><td style="padding:10px; border:1px solid #444; background:#f8f8f8; color:black;">${investigator}</td></tr>
+        <tr><th style="background:#222; color:white; padding:10px; border:1px solid #444;">BADGE NUMBER</th><td style="padding:10px; border:1px solid #444; background:#f8f8f8; color:black;">${badge}</td></tr>
+        <tr><th style="background:#222; color:white; padding:10px; border:1px solid #444;">DATE AND TIME</th><td style="padding:10px; border:1px solid #444; background:#f8f8f8; color:black;">${datetime}</td></tr>
+        <tr><th style="background:#222; color:white; padding:10px; border:1px solid #444;">STREET / CROSS STREET</th><td style="padding:10px; border:1px solid #444; background:#f8f8f8; color:black;">${location}</td></tr>
+    </table>
+
+    <div style="background:#222; color:white; padding:10px 15px; font-weight:bold; font-size:15px; margin-top:10px;">SUBJECT DETAILS</div>
+    <table style="width:100%; border-collapse:collapse;">
+        <tr><th style="background:#222; color:white; padding:10px; border:1px solid #444; width:30%;">NAME</th><td style="padding:10px; border:1px solid #444; background:#f8f8f8; color:black;">${subject}</td></tr>
+        <tr><th style="background:#222; color:white; padding:10px; border:1px solid #444;">ALIAS</th><td style="padding:10px; border:1px solid #444; background:#f8f8f8; color:black;">${alias}</td></tr>
+        <tr><th style="background:#222; color:white; padding:10px; border:1px solid #444;">GANG</th><td style="padding:10px; border:1px solid #444; background:#f8f8f8; color:black;">${gang}</td></tr>
+        <tr><th style="background:#222; color:white; padding:10px; border:1px solid #444;">PHYSICAL DESCRIPTION</th><td style="padding:10px; border:1px solid #444; background:#f8f8f8; color:black;">${description}</td></tr>
+    </table>
+
+    <div style="background:#222; color:white; padding:10px 15px; font-weight:bold; font-size:15px; margin-top:10px;">CRITERIA MET</div>
+    <div style="background:#f8f8f8; color:black; padding:15px; border:1px solid #444;">
+        List each applicable criteria and the reason it was selected. Example:<br>
+        Criteria A: Individual was observed displaying gang affiliated tattoos on left forearm.<br><br>
+        ${criteriaHTML}
+    </div>
+
+    <div style="background:#222; color:white; padding:10px 15px; font-weight:bold; font-size:15px; margin-top:10px;">EVIDENCE</div>
+    <div style="background:#f8f8f8; color:black; padding:15px; border:1px solid #444;">
+        ${evidenceHTML}
+    </div>
+
+    <div style="text-align:center; font-size:12px; padding:12px; background:#111; color:#888;">
+        // CONFIDENTIAL LAW ENFORCEMENT USE ONLY //
+    </div>
+</div>`;
+
+            document.getElementById('output').innerHTML = html;
         }
 
         function copyHTML() {
-            const content = document.getElementById('output').innerHTML.trim();
+            const content = document.getElementById('output').innerHTML;
             if (!content) {
-                alert("Please click Generate Document first ya silly mouse.");
+                alert("Generate the document first!");
                 return;
             }
             navigator.clipboard.writeText(content).then(() => {
-                alert('copied to clipboard!\nPaste it directly into MDC.');
-            }).catch(err => {
-                alert('Copy failed?');
+                alert("Paste into your MDC.");
             });
         }
     </script>
