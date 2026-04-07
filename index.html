@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SanGang Paperwork Generator V1A</title>
+<title>SanGang Entry Generator</title>
 
 <style>
 body {
@@ -39,6 +39,7 @@ button {
     border-radius: 8px;
     font-weight: bold;
     cursor: pointer;
+    margin-top: 5px;
 }
 
 button:hover {
@@ -106,6 +107,7 @@ button:hover {
 <textarea id="evidence" placeholder="Evidence (format: Name|Link per line)"></textarea>
 
 <button onclick="generate()">Generate Document</button>
+<button onclick="copyHTML()">Copy Document HTML</button>
 
 <div id="output" class="output"></div>
 
@@ -146,6 +148,10 @@ function generate() {
     });
 
     const html = `
+    <div style="text-align:center; margin-bottom:10px;">
+        <img src="https://mdc.gta.world/img/logo/en_ls/DAO.png" style="max-width:120px;">
+    </div>
+
     <div class="confidential">
         <span>CONFIDENTIAL</span> - INTERNAL USE ONLY<br>
         Unauthorized access, duplication or distribution is strictly prohibited.
@@ -181,6 +187,13 @@ function generate() {
     `;
 
     document.getElementById('output').innerHTML = html;
+}
+
+function copyHTML() {
+    const content = document.getElementById('output').innerHTML;
+    navigator.clipboard.writeText(content).then(() => {
+        alert('Document HTML copied to clipboard');
+    });
 }
 </script>
 
