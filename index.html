@@ -1,202 +1,131 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SanGang Entry Generator</title>
-
-<style>
-body {
-    font-family: Arial, sans-serif;
-    background: #0b0f1a;
-    color: white;
-    margin: 0;
-    padding: 20px;
-}
-.container {
-    max-width: 900px;
-    margin: auto;
-}
-h1 {
-    text-align: center;
-}
-input, textarea, select {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 6px;
-    border: none;
-}
-button {
-    width: 100%;
-    padding: 12px;
-    background: #38bdf8;
-    border: none;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 5px;
-}
-button:hover {
-    background: #0ea5e9;
-}
-.output {
-    margin-top: 30px;
-    padding: 20px;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SanGang Entry Generator</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #0b0f1a; color: white; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: auto; }
+        h1 { text-align: center; }
+        input, textarea, select { width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 6px; border: none; }
+        button { width: 100%; padding: 12px; background: #38bdf8; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 5px; }
+        button:hover { background: #0ea5e9; }
+        .output { margin-top: 30px; background: #e5e5e5; padding: 20px; color: black; }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <h1>SanGang Entry Generator</h1>
+        <input id="investigator" placeholder="Investigator Name">
+        <input id="badge" placeholder="Badge Number">
+        <input id="datetime" placeholder="Date/Time">
+        <input id="location" placeholder="Location">
+        <input id="subject" placeholder="Subject Name">
+        <input id="alias" placeholder="Alias">
+        <input id="gang" placeholder="Gang Affiliation">
+        <select id="threat">
+            <option>LOW</option>
+            <option>MEDIUM</option>
+            <option>HIGH</option>
+        </select>
+        <textarea id="description" placeholder="Description"></textarea>
+        <textarea id="criteria" placeholder="Criteria (one per line, A-H)"></textarea>
+        <textarea id="evidence" placeholder="Evidence (format: Name|Link per line)"></textarea>
+        <button onclick="generate()">Generate Document</button>
+        <button onclick="copyHTML()">Copy Document HTML</button>
+        <div id="output" class="output"></div>
+    </div>
 
-<div class="container">
+    <script>
+        function generate() {
+            const investigator = document.getElementById('investigator').value || "yes";
+            const badge = document.getElementById('badge').value || "1234";
+            const datetime = document.getElementById('datetime').value || "24/24/1925";
+            const location = document.getElementById('location').value || "yes";
+            const subject = document.getElementById('subject').value || "yes";
+            const alias = document.getElementById('alias').value || "yes";
+            const gang = document.getElementById('gang').value || "yes";
+            const threat = document.getElementById('threat').value;
+            const description = document.getElementById('description').value || "yes";
 
-<h1>SanGang Entry Generator</h1>
+            const criteriaLines = document.getElementById('criteria').value.trim().split("\n");
+            const evidenceLines = document.getElementById('evidence').value.trim().split("\n");
 
-<input id="investigator" placeholder="Investigator Name">
-<input id="badge" placeholder="Badge Number">
-<input id="datetime" placeholder="Date/Time">
-<input id="location" placeholder="Location">
+            let criteriaHTML = "";
+            const letters = ['A','B','C','D','E','F','G','H'];
+            criteriaLines.forEach((line, i) => {
+                if (line.trim() !== "") {
+                    criteriaHTML += `<b>CRITERIA ${letters[i]}:</b> ${line.trim()}<br>`;
+                }
+            });
 
-<input id="subject" placeholder="Subject Name">
-<input id="alias" placeholder="Alias">
-<input id="gang" placeholder="Gang Affiliation">
+            let evidenceHTML = "";
+            evidenceLines.forEach((line, i) => {
+                if (line.trim() !== "" && line.includes("|")) {
+                    const [name, link] = line.split("|").map(s => s.trim());
+                    evidenceHTML += `<b>Exhibit ${i+1}: ${name} - <a href="${link}" target="_blank">ATTACHMENT</a></b><br>`;
+                } else if (line.trim() !== "") {
+                    evidenceHTML += `<b>Exhibit ${i+1}: ${line.trim()} - <a href="www.google.com" target="_blank">ATTACHMENT</a></b><br>`;
+                }
+            });
 
-<select id="threat">
-<option>LOW</option>
-<option>MEDIUM</option>
-<option>HIGH</option>
-</select>
-
-<textarea id="description" placeholder="Description"></textarea>
-<textarea id="criteria" placeholder="Criteria (one per line)"></textarea>
-<textarea id="evidence" placeholder="Evidence (Name|Link per line)"></textarea>
-
-<button onclick="generate()">Generate Document</button>
-<button onclick="copyHTML()">Copy Document HTML</button>
-
-<div id="output" class="output"></div>
-
-</div>
-
-<script>
-function generate() {
-    const investigator = document.getElementById('investigator').value;
-    const badge = document.getElementById('badge').value;
-    const datetime = document.getElementById('datetime').value;
-    const location = document.getElementById('location').value;
-
-    const subject = document.getElementById('subject').value;
-    const alias = document.getElementById('alias').value;
-    const gang = document.getElementById('gang').value;
-    const threat = document.getElementById('threat').value;
-    const description = document.getElementById('description').value;
-
-    const criteriaLines = document.getElementById('criteria').value.split("\n");
-    const evidenceLines = document.getElementById('evidence').value.split("\n");
-
-    let criteriaHTML = "";
-    const letters = ['A','B','C','D','E','F','G','H'];
-
-    criteriaLines.forEach((line, i) => {
-        if(line.trim() !== "") {
-            criteriaHTML += `<font color="#000000"><b>CRITERIA ${letters[i]}:</b> ${line}</font><br>`;
-        }
-    });
-
-    let evidenceHTML = "";
-    evidenceLines.forEach((line, i) => {
-        if(line.includes("|")) {
-            const [name, link] = line.split("|");
-            evidenceHTML += `<font color="#000000"><b>Exhibit ${i+1}:</b> ${name} - <a href="${link}" target="_blank">ATTACHMENT</a></font><br>`;
-        }
-    });
-
-    const html = `
+            const html = `
 <p><br></p>
-<div style="text-align:center; margin-bottom:10px;">
-<img src="https://mdc.gta.world/img/logo/en_ls/DAO.png" style="max-width:120px;">
+<div style="text-align:center; margin-bottom:10px;"> 
+    <img src="https://mdc.gta.world/img/logo/en_ls/DAO.png" style="max-width:120px;"> 
 </div>
-<p><br></p>
-
-<div style="text-align:center; font-weight:bold;">
-<span style="color:red;">CONFIDENTIAL</span> - INTERNAL USE ONLY<br>
-Unauthorized access, duplication or distribution is strictly prohibited.
+<p> <br></p>
+<div style="text-align:center; font-weight:bold; margin-bottom:10px;"> 
+    <span style="color:red;">CONFIDENTIAL</span> - INTERNAL USE ONLY<br> 
+    Unauthorized access, duplication or distribution is strictly prohibited. 
 </div>
-
-<p><br></p>
-
+<p> <br></p>
 <div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px;">FILING DETAILS</div>
-<p><br></p>
-
-<div style="background:white; padding:10px; border:1px solid #ccc;">
-<font color="#000000">
-<b>FILING INVESTIGATOR:</b> ${investigator}<br>
-<b>BADGE NUMBER:</b> ${badge}<br>
-<b>FILING AGENCY:</b> BUREAU OF INVESTIGATION<br>
-<b>DATE/TIME:</b> ${datetime}<br>
-<b>LOCATION:</b> ${location}
-</font>
+<p> <br></p>
+<div style="background:white; padding:10px; border:1px solid #ccc;"> 
+    <font color="#000000" style=""><b>FILING INVESTIGATOR: ${investigator}<br>
+    BADGE NUMBER: ${badge}<br>
+    FILING AGENCY: BUREAU OF INVESTIGATION<br>
+    DATE/TIME: ${datetime}<br>
+    LOCATION: ${location} </b></font>
 </div>
-
-<p><br></p>
-
-<div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px;">SUBJECT DETAILS</div>
-<p><br></p>
-
-<div style="background:white; padding:10px; border:1px solid #ccc;">
-<font color="#000000">
-<b>SUBJECT NAME:</b> ${subject}<br>
-<b>SUBJECT'S ALIAS:</b> ${alias}<br>
-<b>GANG AFFILIATION:</b> ${gang}<br>
-<b>THREAT LEVEL:</b> ${threat}<br>
-<b>DESCRIPTION:</b> ${description}
-</font>
+<p> <br></p>
+<div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px; margin-top:10px;">SUBJECT DETAILS</div>
+<p> <br></p>
+<div style="background:white; padding:10px; border:1px solid #ccc;"> 
+    <b><font color="#000000">SUBJECT NAME: ${subject}<br>
+    SUBJECT'S ALIAS: ${alias}<br>
+    GANG AFFILIATION: ${gang}<br>
+    THREAT LEVEL: ${threat}<br>
+    DESCRIPTION: ${description} </font></b>
 </div>
-
-<p><br></p>
-
-<div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px;">CRITERIA</div>
-<p><br></p>
-
-<div style="background:white; padding:10px; border:1px solid #ccc;">
-${criteriaHTML}
+<p> <br></p>
+<div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px; margin-top:10px;">CRITERIA</div>
+<p> <font color="#000000"><br></font></p>
+<div style="background:white; padding:10px; border:1px solid #ccc;"> 
+    <font color="#000000">${criteriaHTML}</font><br> 
 </div>
+<p> <br></p>
+<div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px; margin-top:10px;">EVIDENCE</div>
+<p> <br></p>
+<div style="background:white; padding:10px; border:1px solid #ccc;"> 
+    <font color="#000000">${evidenceHTML}</font>
+</div>`;
 
-<p><br></p>
+            document.getElementById('output').innerHTML = html;
+        }
 
-<div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px;">EVIDENCE</div>
-<p><br></p>
-
-<div style="background:white; padding:10px; border:1px solid #ccc;">
-${evidenceHTML}
-</div>
-`;
-
-    document.getElementById('output').innerHTML = html;
-}
-
-function copyHTML() {
-    const content = document.getElementById('output').innerHTML;
-
-    const temp = document.createElement("div");
-    temp.innerHTML = content;
-    document.body.appendChild(temp);
-
-    const range = document.createRange();
-    range.selectNode(temp);
-
-    const selection = window.getSelection();
-    selection.removeAllRanges();
-    selection.addRange(range);
-
-    document.execCommand("copy");
-
-    document.body.removeChild(temp);
-    selection.removeAllRanges();
-
-    alert("Copied properly for WYSIWYG");
-}
-</script>
-
+        function copyHTML() {
+            const content = document.getElementById('output').innerHTML;
+            if (!content) {
+                alert("Please generate the document first!");
+                return;
+            }
+            navigator.clipboard.writeText(content).then(() => {
+                alert('Document HTML copied to clipboard (exact format)');
+            });
+        }
+    </script>
 </body>
 </html>
