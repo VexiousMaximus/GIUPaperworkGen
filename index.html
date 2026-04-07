@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SanGang Entry Generator</title>
+<title>SanGang Entry Paperwork Generator Prototype V1a</title>
 <style>
 body {
     font-family: Arial, sans-serif;
@@ -47,31 +47,6 @@ button:hover {
 
 .output {
     margin-top: 30px;
-}
-
-.box {
-    background: white;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-}
-
-.header-black {
-    background: black;
-    color: white;
-    text-align: center;
-    font-weight: bold;
-    padding: 5px;
-}
-
-.confidential {
-    text-align: center;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
-
-.confidential span {
-    color: red;
 }
 </style>
 </head>
@@ -184,7 +159,7 @@ function generate() {
 function copyHTML() {
     const content = document.getElementById('output').innerHTML;
 
-    // Wrap entire output in container with inline styles for WYSIWYG compatibility
+    // Wrap in container with inline styles so WYSIWYG editors preserve formatting
     const fullHTML = `
     <div style="font-family: Arial, sans-serif; background:#0b0f1a; color:white; padding:20px;">
         ${content}
