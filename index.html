@@ -54,7 +54,7 @@ button:hover {
 
 <div class="container">
 
-<h1>SanGang Entry Generator</h1>
+<h1>SanGang Entry Paperwork Generator Prototype V1a</h1>
 
 <input id="investigator" placeholder="Investigator Name">
 <input id="badge" placeholder="Badge Number">
@@ -76,7 +76,7 @@ button:hover {
 <textarea id="evidence" placeholder="Evidence (format: Name|Link per line)"></textarea>
 
 <button onclick="generate()">Generate Document</button>
-<button onclick="copyHTML()">Copy Document HTML</button>
+<button onclick="copyHTML()">Copy to MDC format</button>
 
 <div id="output" class="output"></div>
 
@@ -159,7 +159,7 @@ function generate() {
 function copyHTML() {
     const content = document.getElementById('output').innerHTML;
 
-    // Wrap in container with inline styles so WYSIWYG editors preserve formatting
+    // Wrap in container with inline styles so WYSIWYG editors are happy mice
     const fullHTML = `
     <div style="font-family: Arial, sans-serif; background:#0b0f1a; color:white; padding:20px;">
         ${content}
@@ -171,10 +171,10 @@ function copyHTML() {
             "text/html": new Blob([fullHTML], { type: "text/html" })
         })
     ]).then(() => {
-        alert('Document copied with full formatting!');
+        alert('Document copied with full formatting! Paste into MDC!');
     }).catch(err => {
         console.error(err);
-        alert('Failed to copy document');
+        alert('Failed to copy document sadmouse');
     });
 }
 </script>
