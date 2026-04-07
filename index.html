@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SanGang Entry Paperwork Generator Prototype V1a</title>
+<title>SanGang Entry Generator PROTOTYPE V1a</title>
 <style>
 body {
     font-family: Arial, sans-serif;
@@ -48,13 +48,38 @@ button:hover {
 .output {
     margin-top: 30px;
 }
+
+.box {
+    background: white;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+}
+
+.header-black {
+    background: black;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+    padding: 5px;
+}
+
+.confidential {
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.confidential span {
+    color: red;
+}
 </style>
 </head>
 <body>
 
 <div class="container">
 
-<h1>SanGang Entry Paperwork Generator Prototype V1a</h1>
+<h1>SanGang Entry Generator</h1>
 
 <input id="investigator" placeholder="Investigator Name">
 <input id="badge" placeholder="Badge Number">
@@ -76,7 +101,7 @@ button:hover {
 <textarea id="evidence" placeholder="Evidence (format: Name|Link per line)"></textarea>
 
 <button onclick="generate()">Generate Document</button>
-<button onclick="copyHTML()">Copy to MDC format</button>
+<button onclick="copyHTML()">Copy Document to MDC</button>
 
 <div id="output" class="output"></div>
 
@@ -102,7 +127,7 @@ function generate() {
     criteriaLines.forEach((line, i) => {
         if(line.trim() !== "") {
             const letter = String.fromCharCode(65 + i); // A, B, C...
-            criteriaHTML += `<b>CRITERIA ${letter}:</b> ${line}<br>`;
+            criteriaHTML += `<b>CRITERIA ${letter}:</b> <span style="color:black;">${line}</span><br>`;
         }
     });
 
@@ -110,7 +135,7 @@ function generate() {
     evidenceLines.forEach((line, i) => {
         if(line.includes("|")) {
             const [name, link] = line.split("|");
-            evidenceHTML += `<b>Exhibit ${i+1}:</b> ${name} - <a href="${link}" target="_blank">${link}</a><br>`;
+            evidenceHTML += `<b>Exhibit ${i+1}:</b> <span style="color:black;">${name} - <a href="${link}" target="_blank">${link}</a></span><br>`;
         }
     });
 
@@ -126,20 +151,20 @@ function generate() {
 
     <div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px;">FILING DETAILS</div>
     <div style="background:white; padding:10px; border:1px solid #000; color:black;">
-        <b>FILING INVESTIGATOR:</b> ${investigator}<br>
-        <b>BADGE NUMBER:</b> ${badge}<br>
-        <b>FILING AGENCY:</b> BUREAU OF INVESTIGATION<br>
-        <b>DATE/TIME:</b> ${datetime}<br>
-        <b>LOCATION:</b> ${location}
+        <b>FILING INVESTIGATOR:</b> <span style="color:black;">${investigator}</span><br>
+        <b>BADGE NUMBER:</b> <span style="color:black;">${badge}</span><br>
+        <b>FILING AGENCY:</b> <span style="color:black;">BUREAU OF INVESTIGATION</span><br>
+        <b>DATE/TIME:</b> <span style="color:black;">${datetime}</span><br>
+        <b>LOCATION:</b> <span style="color:black;">${location}</span>
     </div>
 
     <div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px; margin-top:10px;">SUBJECT DETAILS</div>
     <div style="background:white; padding:10px; border:1px solid #000; color:black;">
-        <b>SUBJECT NAME:</b> ${subject}<br>
-        <b>SUBJECT'S ALIAS:</b> ${alias}<br>
-        <b>GANG AFFILIATION:</b> ${gang}<br>
-        <b>THREAT LEVEL:</b> ${threat}<br>
-        <b>DESCRIPTION:</b> ${description}
+        <b>SUBJECT NAME:</b> <span style="color:black;">${subject}</span><br>
+        <b>SUBJECT'S ALIAS:</b> <span style="color:black;">${alias}</span><br>
+        <b>GANG AFFILIATION:</b> <span style="color:black;">${gang}</span><br>
+        <b>THREAT LEVEL:</b> <span style="color:black;">${threat}</span><br>
+        <b>DESCRIPTION:</b> <span style="color:black;">${description}</span>
     </div>
 
     <div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px; margin-top:10px;">CRITERIA</div>
@@ -160,41 +185,21 @@ function copyHTML() {
     const content = document.getElementById('output').innerHTML;
 
     const fullHTML = `
-    <div style="font-family: Arial, sans-serif; background:white; color:black; padding:20px;">
+    <div style="font-family: Arial, sans-serif; background:#0b0f1a; color:white; padding:20px;">
         ${content}
     </div>
     `;
 
-    // Create temporary off-screen div for selection
-    const tempDiv = document.createElement('div');
-    tempDiv.style.position = 'absolute';
-    tempDiv.style.left = '-9999px';
-    tempDiv.innerHTML = fullHTML;
-    document.body.appendChild(tempDiv);
-
-    // Select the content
-    const range = document.createRange();
-    range.selectNodeContents(tempDiv);
-    const sel = window.getSelection();
-    sel.removeAllRanges();
-    sel.addRange(range);
-
-    // Copy to clipboard
-    try {
-        const successful = document.execCommand('copy');
-        if (successful) {
-            alert('Document copied! Paste into MDC editor now.');
-        } else {
-            alert('Copy failed. Try again.');
-        }
-    } catch (err) {
+    navigator.clipboard.write([
+        new ClipboardItem({
+            "text/html": new Blob([fullHTML], { type: "text/html" })
+        })
+    ]).then(() => {
+        alert('Document copied! Paste to MDC!');
+    }).catch(err => {
         console.error(err);
-        alert('Copy failed. Check browser support.');
-    }
-
-    // Cleanup
-    sel.removeAllRanges();
-    document.body.removeChild(tempDiv);
+        alert('Failed to copy document sadmouse');
+    });
 }
 </script>
 
