@@ -48,9 +48,9 @@ button:hover {
 
 .output {
     margin-top: 30px;
-    background: #e5e5e5;
+    background: #0b0f1a;
     padding: 20px;
-    color: black;
+    color: white;
 }
 
 .box {
@@ -58,6 +58,7 @@ button:hover {
     padding: 10px;
     margin-bottom: 10px;
     border: 1px solid #ccc;
+    color: black;
 }
 
 .header-black {
@@ -139,7 +140,6 @@ function generate() {
     });
 
     let evidenceHTML = "";
-
     evidenceLines.forEach((line, i) => {
         if(line.includes("|")) {
             const [name, link] = line.split("|");
@@ -147,53 +147,51 @@ function generate() {
         }
     });
 
-    const html = `
-    <div style="text-align:center; margin-bottom:10px;">
-        <img src="https://mdc.gta.world/img/logo/en_ls/DAO.png" style="max-width:120px;">
-    </div>
-
-    <div style="text-align:center; font-weight:bold; margin-bottom:10px;">
-        <span style="color:red;">CONFIDENTIAL</span> - INTERNAL USE ONLY<br>
-        Unauthorized access, duplication or distribution is strictly prohibited.
-    </div>
-
-    <div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px;">FILING DETAILS</div>
-    <div style="background:white; padding:10px; border:1px solid #ccc;">
-        <b>FILING INVESTIGATOR:</b> ${investigator}<br>
-        <b>BADGE NUMBER:</b> ${badge}<br>
-        <b>FILING AGENCY:</b> BUREAU OF INVESTIGATION<br>
-        <b>DATE/TIME:</b> ${datetime}<br>
-        <b>LOCATION:</b> ${location}
-    </div>
-
-    <div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px; margin-top:10px;">SUBJECT DETAILS</div>
-    <div style="background:white; padding:10px; border:1px solid #ccc;">
-        <b>SUBJECT NAME:</b> ${subject}<br>
-        <b>SUBJECT'S ALIAS:</b> ${alias}<br>
-        <b>GANG AFFILIATION:</b> ${gang}<br>
-        <b>THREAT LEVEL:</b> ${threat}<br>
-        <b>DESCRIPTION:</b> ${description}
-    </div>
-
-    <div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px; margin-top:10px;">CRITERIA</div>
-    <div style="background:white; padding:10px; border:1px solid #ccc;">
-        ${criteriaHTML}
-    </div>
-
-    <div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px; margin-top:10px;">EVIDENCE</div>
-    <div style="background:white; padding:10px; border:1px solid #ccc;">
-        ${evidenceHTML}
-    </div>
-    `;
+    const html = `<p><br></p>
+<div style="text-align:center; margin-bottom:10px;">
+    <img src="https://mdc.gta.world/img/logo/en_ls/DAO.png" style="max-width:120px;">
+</div><p><br></p>
+<div style="text-align:center; font-weight:bold; margin-bottom:10px;">
+    <span style="color:red;">CONFIDENTIAL</span> - INTERNAL USE ONLY<br>
+    Unauthorized access, duplication or distribution is strictly prohibited.
+</div><p><br></p>
+<div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px;">FILING DETAILS</div><p><br></p>
+<div style="background:white; padding:10px; border:1px solid #ccc; color:black;">
+    <b>FILING INVESTIGATOR:</b> ${investigator}<br>
+    <b>BADGE NUMBER:</b> ${badge}<br>
+    <b>FILING AGENCY:</b> BUREAU OF INVESTIGATION<br>
+    <b>DATE/TIME:</b> ${datetime}<br>
+    <b>LOCATION:</b> ${location}
+</div><p><br></p>
+<div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px; margin-top:10px;">SUBJECT DETAILS</div><p><br></p>
+<div style="background:white; padding:10px; border:1px solid #ccc; color:black;">
+    <b>SUBJECT NAME:</b> ${subject}<br>
+    <b>SUBJECT'S ALIAS:</b> ${alias}<br>
+    <b>GANG AFFILIATION:</b> ${gang}<br>
+    <b>THREAT LEVEL:</b> ${threat}<br>
+    <b>DESCRIPTION:</b> ${description}
+</div><p><br></p>
+<div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px; margin-top:10px;">CRITERIA</div><p><br></p>
+<div style="background:white; padding:10px; border:1px solid #ccc; color:black;">
+    ${criteriaHTML}
+</div><p><br></p>
+<div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px; margin-top:10px;">EVIDENCE</div><p><br></p>
+<div style="background:white; padding:10px; border:1px solid #ccc; color:black;">
+    ${evidenceHTML}
+</div>`;
 
     document.getElementById('output').innerHTML = html;
 }
 
 function copyHTML() {
     const content = document.getElementById('output').innerHTML;
-    navigator.clipboard.writeText(content).then(() => {
-        alert('Document HTML copied to clipboard');
-    });
+    const textarea = document.createElement('textarea');
+    textarea.value = content;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+    alert('Document HTML copied to clipboard in WYSIWYG-friendly format');
 }
 </script>
 
