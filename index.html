@@ -1,10 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SanGang Entry Generator</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #0b0f1a;
+    color: white;
+    margin: 0;
+    padding: 20px;
+}
+.container {
+    max-width: 900px;
+    margin: auto;
+}
+h1 {
+    text-align: center;
+}
+input, textarea, select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    border: none;
+}
+button {
+    width: 100%;
+    padding: 12px;
+    background: #38bdf8;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 5px;
+}
+button:hover {
+    background: #0ea5e9;
+}
+.output {
+    margin-top: 30px;
+    background: #0b0f1a;
+    padding: 20px;
+    color: white;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<h1>SanGang Entry Generator</h1>
+
+<input id="investigator" placeholder="Investigator Name">
+<input id="badge" placeholder="Badge Number">
+<input id="datetime" placeholder="Date/Time">
+<input id="location" placeholder="Location">
+
+<input id="subject" placeholder="Subject Name">
+<input id="alias" placeholder="Alias">
+<input id="gang" placeholder="Gang Affiliation">
+
+<select id="threat">
+<option>LOW</option>
+<option>MEDIUM</option>
+<option>HIGH</option>
+</select>
+
+<textarea id="description" placeholder="Description"></textarea>
+<textarea id="criteria" placeholder="Criteria (one per line, A-H)"></textarea>
+<textarea id="evidence" placeholder="Evidence (format: Name|Link per line)"></textarea>
+
+<button onclick="generate()">Generate Document</button>
+<button onclick="copyHTML()">Copy Document HTML</button>
+
+<div id="output" class="output"></div>
+
+</div>
+
 <script>
 function generate() {
     const investigator = document.getElementById('investigator').value;
     const badge = document.getElementById('badge').value;
     const datetime = document.getElementById('datetime').value;
     const location = document.getElementById('location').value;
-
     const subject = document.getElementById('subject').value;
     const alias = document.getElementById('alias').value;
     const gang = document.getElementById('gang').value;
@@ -68,12 +148,16 @@ function generate() {
 
 function copyHTML() {
     const content = document.getElementById('output').innerHTML;
-    const textarea = document.createElement('textarea');
-    textarea.value = content;
-    document.body.appendChild(textarea);
-    textarea.select();
-    document.execCommand('copy');
-    document.body.removeChild(textarea);
-    alert('Document HTML copied to clipboard in WYSIWYG-friendly format');
+    const blob = new Blob([content], { type: "text/html" });
+    const data = [new ClipboardItem({ "text/html": blob })];
+
+    navigator.clipboard.write(data).then(() => {
+        alert("Copied with full WYSIWYG formatting");
+    }).catch(err => {
+        alert("Clipboard failed: " + err);
+    });
 }
 </script>
+
+</body>
+</html>
