@@ -159,9 +159,9 @@ function generate() {
 function copyHTML() {
     const content = document.getElementById('output').innerHTML;
 
-    // Wrap in container with inline styles so WYSIWYG editors are happy mice
+    // Wrap in white background + black text so WYSIWYG editors display correctly
     const fullHTML = `
-    <div style="font-family: Arial, sans-serif; background:#0b0f1a; color:white; padding:20px;">
+    <div style="font-family: Arial, sans-serif; background:white; color:black; padding:20px;">
         ${content}
     </div>
     `;
@@ -171,10 +171,10 @@ function copyHTML() {
             "text/html": new Blob([fullHTML], { type: "text/html" })
         })
     ]).then(() => {
-        alert('Document copied with full formatting! Paste into MDC!');
+        alert('Document copied! Paste into MDC box!');
     }).catch(err => {
         console.error(err);
-        alert('Failed to copy document sadmouse');
+        alert('Failed to copy, youve been a badmouse.');
     });
 }
 </script>
