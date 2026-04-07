@@ -159,23 +159,42 @@ function generate() {
 function copyHTML() {
     const content = document.getElementById('output').innerHTML;
 
-    // Wrap in white background + black text so WYSIWYG editors display correctly
     const fullHTML = `
     <div style="font-family: Arial, sans-serif; background:white; color:black; padding:20px;">
         ${content}
     </div>
     `;
 
-    navigator.clipboard.write([
-        new ClipboardItem({
-            "text/html": new Blob([fullHTML], { type: "text/html" })
-        })
-    ]).then(() => {
-        alert('Document copied! Paste into MDC box!');
-    }).catch(err => {
+    // Create temporary off-screen div for selection
+    const tempDiv = document.createElement('div');
+    tempDiv.style.position = 'absolute';
+    tempDiv.style.left = '-9999px';
+    tempDiv.innerHTML = fullHTML;
+    document.body.appendChild(tempDiv);
+
+    // Select the content
+    const range = document.createRange();
+    range.selectNodeContents(tempDiv);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+
+    // Copy to clipboard
+    try {
+        const successful = document.execCommand('copy');
+        if (successful) {
+            alert('Document copied! Paste into MDC editor now.');
+        } else {
+            alert('Copy failed. Try again.');
+        }
+    } catch (err) {
         console.error(err);
-        alert('Failed to copy, youve been a badmouse.');
-    });
+        alert('Copy failed. Check browser support.');
+    }
+
+    // Cleanup
+    sel.removeAllRanges();
+    document.body.removeChild(tempDiv);
 }
 </script>
 
