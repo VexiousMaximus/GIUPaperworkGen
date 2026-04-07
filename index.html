@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SanGang Entry Generator</title>
+
 <style>
 body {
     font-family: Arial, sans-serif;
@@ -41,9 +42,7 @@ button:hover {
 }
 .output {
     margin-top: 30px;
-    background: #0b0f1a;
     padding: 20px;
-    color: white;
 }
 </style>
 </head>
@@ -69,8 +68,8 @@ button:hover {
 </select>
 
 <textarea id="description" placeholder="Description"></textarea>
-<textarea id="criteria" placeholder="Criteria (one per line, A-H)"></textarea>
-<textarea id="evidence" placeholder="Evidence (format: Name|Link per line)"></textarea>
+<textarea id="criteria" placeholder="Criteria (one per line)"></textarea>
+<textarea id="evidence" placeholder="Evidence (Name|Link per line)"></textarea>
 
 <button onclick="generate()">Generate Document</button>
 <button onclick="copyHTML()">Copy Document HTML</button>
@@ -85,6 +84,7 @@ function generate() {
     const badge = document.getElementById('badge').value;
     const datetime = document.getElementById('datetime').value;
     const location = document.getElementById('location').value;
+
     const subject = document.getElementById('subject').value;
     const alias = document.getElementById('alias').value;
     const gang = document.getElementById('gang').value;
@@ -96,6 +96,7 @@ function generate() {
 
     let criteriaHTML = "";
     const letters = ['A','B','C','D','E','F','G','H'];
+
     criteriaLines.forEach((line, i) => {
         if(line.trim() !== "") {
             criteriaHTML += `<font color="#000000"><b>CRITERIA ${letters[i]}:</b> ${line}</font><br>`;
@@ -110,52 +111,90 @@ function generate() {
         }
     });
 
-    const html = `<p><br></p>
+    const html = `
+<p><br></p>
 <div style="text-align:center; margin-bottom:10px;">
-    <img src="https://mdc.gta.world/img/logo/en_ls/DAO.png" style="max-width:120px;">
-</div><p><br></p>
-<div style="text-align:center; font-weight:bold; margin-bottom:10px;">
-    <span style="color:red;">CONFIDENTIAL</span> - INTERNAL USE ONLY<br>
-    Unauthorized access, duplication or distribution is strictly prohibited.
-</div><p><br></p>
-<div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px;">FILING DETAILS</div><p><br></p>
+<img src="https://mdc.gta.world/img/logo/en_ls/DAO.png" style="max-width:120px;">
+</div>
+<p><br></p>
+
+<div style="text-align:center; font-weight:bold;">
+<span style="color:red;">CONFIDENTIAL</span> - INTERNAL USE ONLY<br>
+Unauthorized access, duplication or distribution is strictly prohibited.
+</div>
+
+<p><br></p>
+
+<div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px;">FILING DETAILS</div>
+<p><br></p>
+
 <div style="background:white; padding:10px; border:1px solid #ccc;">
-    <font color="#000000"><b>FILING INVESTIGATOR:</b> ${investigator}<br>
-    <b>BADGE NUMBER:</b> ${badge}<br>
-    <b>FILING AGENCY:</b> BUREAU OF INVESTIGATION<br>
-    <b>DATE/TIME:</b> ${datetime}<br>
-    <b>LOCATION:</b> ${location}</font>
-</div><p><br></p>
-<div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px; margin-top:10px;">SUBJECT DETAILS</div><p><br></p>
+<font color="#000000">
+<b>FILING INVESTIGATOR:</b> ${investigator}<br>
+<b>BADGE NUMBER:</b> ${badge}<br>
+<b>FILING AGENCY:</b> BUREAU OF INVESTIGATION<br>
+<b>DATE/TIME:</b> ${datetime}<br>
+<b>LOCATION:</b> ${location}
+</font>
+</div>
+
+<p><br></p>
+
+<div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px;">SUBJECT DETAILS</div>
+<p><br></p>
+
 <div style="background:white; padding:10px; border:1px solid #ccc;">
-    <font color="#000000"><b>SUBJECT NAME:</b> ${subject}<br>
-    <b>SUBJECT'S ALIAS:</b> ${alias}<br>
-    <b>GANG AFFILIATION:</b> ${gang}<br>
-    <b>THREAT LEVEL:</b> ${threat}<br>
-    <b>DESCRIPTION:</b> ${description}</font>
-</div><p><br></p>
-<div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px; margin-top:10px;">CRITERIA</div><p><br></p>
+<font color="#000000">
+<b>SUBJECT NAME:</b> ${subject}<br>
+<b>SUBJECT'S ALIAS:</b> ${alias}<br>
+<b>GANG AFFILIATION:</b> ${gang}<br>
+<b>THREAT LEVEL:</b> ${threat}<br>
+<b>DESCRIPTION:</b> ${description}
+</font>
+</div>
+
+<p><br></p>
+
+<div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px;">CRITERIA</div>
+<p><br></p>
+
 <div style="background:white; padding:10px; border:1px solid #ccc;">
-    ${criteriaHTML}
-</div><p><br></p>
-<div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px; margin-top:10px;">EVIDENCE</div><p><br></p>
+${criteriaHTML}
+</div>
+
+<p><br></p>
+
+<div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px;">EVIDENCE</div>
+<p><br></p>
+
 <div style="background:white; padding:10px; border:1px solid #ccc;">
-    ${evidenceHTML}
-</div>`;
+${evidenceHTML}
+</div>
+`;
 
     document.getElementById('output').innerHTML = html;
 }
 
 function copyHTML() {
     const content = document.getElementById('output').innerHTML;
-    const blob = new Blob([content], { type: "text/html" });
-    const data = [new ClipboardItem({ "text/html": blob })];
 
-    navigator.clipboard.write(data).then(() => {
-        alert("Copied with full WYSIWYG formatting");
-    }).catch(err => {
-        alert("Clipboard failed: " + err);
-    });
+    const temp = document.createElement("div");
+    temp.innerHTML = content;
+    document.body.appendChild(temp);
+
+    const range = document.createRange();
+    range.selectNode(temp);
+
+    const selection = window.getSelection();
+    selection.removeAllRanges();
+    selection.addRange(range);
+
+    document.execCommand("copy");
+
+    document.body.removeChild(temp);
+    selection.removeAllRanges();
+
+    alert("Copied properly for WYSIWYG");
 }
 </script>
 
