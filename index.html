@@ -1,119 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SanGang Entry Generator</title>
-
-<style>
-body {
-    font-family: Arial, sans-serif;
-    background: #0b0f1a;
-    color: white;
-    margin: 0;
-    padding: 20px;
-}
-
-.container {
-    max-width: 900px;
-    margin: auto;
-}
-
-h1 {
-    text-align: center;
-}
-
-input, textarea, select {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 6px;
-    border: none;
-}
-
-button {
-    width: 100%;
-    padding: 12px;
-    background: #38bdf8;
-    border: none;
-    border-radius: 8px;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 5px;
-}
-
-button:hover {
-    background: #0ea5e9;
-}
-
-.output {
-    margin-top: 30px;
-    background: #0b0f1a;
-    padding: 20px;
-    color: white;
-}
-
-.box {
-    background: white;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    color: black;
-}
-
-.header-black {
-    background: black;
-    color: white;
-    text-align: center;
-    font-weight: bold;
-    padding: 5px;
-}
-
-.confidential {
-    text-align: center;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
-
-.confidential span {
-    color: red;
-}
-</style>
-</head>
-<body>
-
-<div class="container">
-
-<h1>SanGang Entry Generator</h1>
-
-<input id="investigator" placeholder="Investigator Name">
-<input id="badge" placeholder="Badge Number">
-<input id="datetime" placeholder="Date/Time">
-<input id="location" placeholder="Location">
-
-<input id="subject" placeholder="Subject Name">
-<input id="alias" placeholder="Alias">
-<input id="gang" placeholder="Gang Affiliation">
-
-<select id="threat">
-<option>LOW</option>
-<option>MEDIUM</option>
-<option>HIGH</option>
-</select>
-
-<textarea id="description" placeholder="Description"></textarea>
-
-<textarea id="criteria" placeholder="Criteria (one per line, A-H)"></textarea>
-
-<textarea id="evidence" placeholder="Evidence (format: Name|Link per line)"></textarea>
-
-<button onclick="generate()">Generate Document</button>
-<button onclick="copyHTML()">Copy Document HTML</button>
-
-<div id="output" class="output"></div>
-
-</div>
-
 <script>
 function generate() {
     const investigator = document.getElementById('investigator').value;
@@ -132,10 +16,9 @@ function generate() {
 
     let criteriaHTML = "";
     const letters = ['A','B','C','D','E','F','G','H'];
-
     criteriaLines.forEach((line, i) => {
         if(line.trim() !== "") {
-            criteriaHTML += `<b>CRITERIA ${letters[i]}:</b> ${line}<br>`;
+            criteriaHTML += `<font color="#000000"><b>CRITERIA ${letters[i]}:</b> ${line}</font><br>`;
         }
     });
 
@@ -143,7 +26,7 @@ function generate() {
     evidenceLines.forEach((line, i) => {
         if(line.includes("|")) {
             const [name, link] = line.split("|");
-            evidenceHTML += `<b>Exhibit ${i+1}:</b> ${name} - <a href="${link}" target="_blank">ATTACHMENT</a><br>`;
+            evidenceHTML += `<font color="#000000"><b>Exhibit ${i+1}:</b> ${name} - <a href="${link}" target="_blank">ATTACHMENT</a></font><br>`;
         }
     });
 
@@ -156,27 +39,27 @@ function generate() {
     Unauthorized access, duplication or distribution is strictly prohibited.
 </div><p><br></p>
 <div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px;">FILING DETAILS</div><p><br></p>
-<div style="background:white; padding:10px; border:1px solid #ccc; color:black;">
-    <b>FILING INVESTIGATOR:</b> ${investigator}<br>
+<div style="background:white; padding:10px; border:1px solid #ccc;">
+    <font color="#000000"><b>FILING INVESTIGATOR:</b> ${investigator}<br>
     <b>BADGE NUMBER:</b> ${badge}<br>
     <b>FILING AGENCY:</b> BUREAU OF INVESTIGATION<br>
     <b>DATE/TIME:</b> ${datetime}<br>
-    <b>LOCATION:</b> ${location}
+    <b>LOCATION:</b> ${location}</font>
 </div><p><br></p>
 <div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px; margin-top:10px;">SUBJECT DETAILS</div><p><br></p>
-<div style="background:white; padding:10px; border:1px solid #ccc; color:black;">
-    <b>SUBJECT NAME:</b> ${subject}<br>
+<div style="background:white; padding:10px; border:1px solid #ccc;">
+    <font color="#000000"><b>SUBJECT NAME:</b> ${subject}<br>
     <b>SUBJECT'S ALIAS:</b> ${alias}<br>
     <b>GANG AFFILIATION:</b> ${gang}<br>
     <b>THREAT LEVEL:</b> ${threat}<br>
-    <b>DESCRIPTION:</b> ${description}
+    <b>DESCRIPTION:</b> ${description}</font>
 </div><p><br></p>
 <div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px; margin-top:10px;">CRITERIA</div><p><br></p>
-<div style="background:white; padding:10px; border:1px solid #ccc; color:black;">
+<div style="background:white; padding:10px; border:1px solid #ccc;">
     ${criteriaHTML}
 </div><p><br></p>
 <div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px; margin-top:10px;">EVIDENCE</div><p><br></p>
-<div style="background:white; padding:10px; border:1px solid #ccc; color:black;">
+<div style="background:white; padding:10px; border:1px solid #ccc;">
     ${evidenceHTML}
 </div>`;
 
@@ -194,6 +77,3 @@ function copyHTML() {
     alert('Document HTML copied to clipboard in WYSIWYG-friendly format');
 }
 </script>
-
-</body>
-</html>
