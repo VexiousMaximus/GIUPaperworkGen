@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SanGang Entry Generator PROTOTYPE V1a</title>
+<title>SanGang Entry Generator</title>
 <style>
 body {
     font-family: Arial, sans-serif;
@@ -101,7 +101,7 @@ button:hover {
 <textarea id="evidence" placeholder="Evidence (format: Name|Link per line)"></textarea>
 
 <button onclick="generate()">Generate Document</button>
-<button onclick="copyHTML()">Copy Document to MDC</button>
+<button onclick="copyHTML()">Copy Document HTML</button>
 
 <div id="output" class="output"></div>
 
@@ -127,7 +127,7 @@ function generate() {
     criteriaLines.forEach((line, i) => {
         if(line.trim() !== "") {
             const letter = String.fromCharCode(65 + i); // A, B, C...
-            criteriaHTML += `<b>CRITERIA ${letter}:</b> <span style="color:black;">${line}</span><br>`;
+            criteriaHTML += `<b>CRITERIA ${letter}:</b> ${line}<br>`;
         }
     });
 
@@ -135,7 +135,7 @@ function generate() {
     evidenceLines.forEach((line, i) => {
         if(line.includes("|")) {
             const [name, link] = line.split("|");
-            evidenceHTML += `<b>Exhibit ${i+1}:</b> <span style="color:black;">${name} - <a href="${link}" target="_blank">${link}</a></span><br>`;
+            evidenceHTML += `<b>Exhibit ${i+1}:</b> ${name} - <a href="${link}" target="_blank">${link}</a><br>`;
         }
     });
 
@@ -151,20 +151,20 @@ function generate() {
 
     <div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px;">FILING DETAILS</div>
     <div style="background:white; padding:10px; border:1px solid #000; color:black;">
-        <b>FILING INVESTIGATOR:</b> <span style="color:black;">${investigator}</span><br>
-        <b>BADGE NUMBER:</b> <span style="color:black;">${badge}</span><br>
-        <b>FILING AGENCY:</b> <span style="color:black;">BUREAU OF INVESTIGATION</span><br>
-        <b>DATE/TIME:</b> <span style="color:black;">${datetime}</span><br>
-        <b>LOCATION:</b> <span style="color:black;">${location}</span>
+        <b>FILING INVESTIGATOR:</b> ${investigator}<br>
+        <b>BADGE NUMBER:</b> ${badge}<br>
+        <b>FILING AGENCY:</b> BUREAU OF INVESTIGATION<br>
+        <b>DATE/TIME:</b> ${datetime}<br>
+        <b>LOCATION:</b> ${location}
     </div>
 
     <div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px; margin-top:10px;">SUBJECT DETAILS</div>
     <div style="background:white; padding:10px; border:1px solid #000; color:black;">
-        <b>SUBJECT NAME:</b> <span style="color:black;">${subject}</span><br>
-        <b>SUBJECT'S ALIAS:</b> <span style="color:black;">${alias}</span><br>
-        <b>GANG AFFILIATION:</b> <span style="color:black;">${gang}</span><br>
-        <b>THREAT LEVEL:</b> <span style="color:black;">${threat}</span><br>
-        <b>DESCRIPTION:</b> <span style="color:black;">${description}</span>
+        <b>SUBJECT NAME:</b> ${subject}<br>
+        <b>SUBJECT'S ALIAS:</b> ${alias}<br>
+        <b>GANG AFFILIATION:</b> ${gang}<br>
+        <b>THREAT LEVEL:</b> ${threat}<br>
+        <b>DESCRIPTION:</b> ${description}
     </div>
 
     <div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px; margin-top:10px;">CRITERIA</div>
@@ -184,6 +184,7 @@ function generate() {
 function copyHTML() {
     const content = document.getElementById('output').innerHTML;
 
+    // Wrap entire output in container with inline styles for WYSIWYG compatibility
     const fullHTML = `
     <div style="font-family: Arial, sans-serif; background:#0b0f1a; color:white; padding:20px;">
         ${content}
@@ -195,10 +196,10 @@ function copyHTML() {
             "text/html": new Blob([fullHTML], { type: "text/html" })
         })
     ]).then(() => {
-        alert('Document copied! Paste to MDC!');
+        alert('Document copied with full formatting!');
     }).catch(err => {
         console.error(err);
-        alert('Failed to copy document sadmouse');
+        alert('Failed to copy document');
     });
 }
 </script>
