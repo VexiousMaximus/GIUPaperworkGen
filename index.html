@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SANGANG Paperwork Gen Prototype V1a</title>
-
+<title>SanGang Entry Generator</title>
 <style>
 body {
     font-family: Arial, sans-serif;
@@ -48,9 +47,6 @@ button:hover {
 
 .output {
     margin-top: 30px;
-    background: #e5e5e5;
-    padding: 20px;
-    color: black;
 }
 
 .box {
@@ -87,7 +83,7 @@ button:hover {
 
 <input id="investigator" placeholder="Investigator Name">
 <input id="badge" placeholder="Badge Number">
-<input id="datetime" placeholder="Date/Time">
+<input type="datetime-local" id="datetime">
 <input id="location" placeholder="Location">
 
 <input id="subject" placeholder="Subject Name">
@@ -101,9 +97,7 @@ button:hover {
 </select>
 
 <textarea id="description" placeholder="Description"></textarea>
-
 <textarea id="criteria" placeholder="Criteria (one per line, A-H)"></textarea>
-
 <textarea id="evidence" placeholder="Evidence (format: Name|Link per line)"></textarea>
 
 <button onclick="generate()">Generate Document</button>
@@ -130,20 +124,18 @@ function generate() {
     const evidenceLines = document.getElementById('evidence').value.split("\n");
 
     let criteriaHTML = "";
-    const letters = ['A','B','C','D','E','F','G','H'];
-
     criteriaLines.forEach((line, i) => {
         if(line.trim() !== "") {
-            criteriaHTML += `<b>CRITERIA ${letters[i]}:</b> ${line}<br>`;
+            const letter = String.fromCharCode(65 + i); // A, B, C...
+            criteriaHTML += `<b>CRITERIA ${letter}:</b> ${line}<br>`;
         }
     });
 
     let evidenceHTML = "";
-
     evidenceLines.forEach((line, i) => {
         if(line.includes("|")) {
             const [name, link] = line.split("|");
-            evidenceHTML += `<b>Exhibit ${i+1}:</b> ${name} - <a href="${link}" target="_blank">ATTACHMENT</a><br>`;
+            evidenceHTML += `<b>Exhibit ${i+1}:</b> ${name} - <a href="${link}" target="_blank">${link}</a><br>`;
         }
     });
 
@@ -158,7 +150,7 @@ function generate() {
     </div>
 
     <div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px;">FILING DETAILS</div>
-    <div style="background:white; padding:10px; border:1px solid #ccc;">
+    <div style="background:white; padding:10px; border:1px solid #000; color:black;">
         <b>FILING INVESTIGATOR:</b> ${investigator}<br>
         <b>BADGE NUMBER:</b> ${badge}<br>
         <b>FILING AGENCY:</b> BUREAU OF INVESTIGATION<br>
@@ -167,7 +159,7 @@ function generate() {
     </div>
 
     <div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px; margin-top:10px;">SUBJECT DETAILS</div>
-    <div style="background:white; padding:10px; border:1px solid #ccc;">
+    <div style="background:white; padding:10px; border:1px solid #000; color:black;">
         <b>SUBJECT NAME:</b> ${subject}<br>
         <b>SUBJECT'S ALIAS:</b> ${alias}<br>
         <b>GANG AFFILIATION:</b> ${gang}<br>
@@ -176,12 +168,12 @@ function generate() {
     </div>
 
     <div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px; margin-top:10px;">CRITERIA</div>
-    <div style="background:white; padding:10px; border:1px solid #ccc;">
+    <div style="background:white; padding:10px; border:1px solid #000; color:black;">
         ${criteriaHTML}
     </div>
 
     <div style="background:black; color:white; text-align:center; font-weight:bold; padding:5px; margin-top:10px;">EVIDENCE</div>
-    <div style="background:white; padding:10px; border:1px solid #ccc;">
+    <div style="background:white; padding:10px; border:1px solid #000; color:black;">
         ${evidenceHTML}
     </div>
     `;
@@ -191,8 +183,23 @@ function generate() {
 
 function copyHTML() {
     const content = document.getElementById('output').innerHTML;
-    navigator.clipboard.writeText(content).then(() => {
-        alert('Document HTML copied to clipboard');
+
+    // Wrap entire output in container with inline styles for WYSIWYG compatibility
+    const fullHTML = `
+    <div style="font-family: Arial, sans-serif; background:#0b0f1a; color:white; padding:20px;">
+        ${content}
+    </div>
+    `;
+
+    navigator.clipboard.write([
+        new ClipboardItem({
+            "text/html": new Blob([fullHTML], { type: "text/html" })
+        })
+    ]).then(() => {
+        alert('Document copied with full formatting!');
+    }).catch(err => {
+        console.error(err);
+        alert('Failed to copy document');
     });
 }
 </script>
